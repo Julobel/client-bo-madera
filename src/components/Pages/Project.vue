@@ -130,14 +130,14 @@
                     v-model="loader"
                     hide-overlay
                     persistent
-                    width="300"
+                    width="400"
             >
                 <v-card
                         color="#1B5E20"
                         dark
                 >
-                    <v-card-text>
-                        Chargement des projest
+                    <v-card-text id="card-text">
+                        Chargement des projets
                         <v-progress-linear
                                 indeterminate
                                 color="#69F0AE"
@@ -251,5 +251,8 @@
 </script>
 
 <style scoped>
+    #card-text {
+        font-size: 25px;
+    }
 
 </style>

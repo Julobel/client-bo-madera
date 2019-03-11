@@ -5,6 +5,7 @@ const ACTOR_CLIENTS = '/actor_clients';
 const PROJECTS = '/projects';
 const QUOTES = '/quotes';
 const MODULES = '/modules';
+const QUOTES_ADMINISTRATIVE_STATES ='/quotes_administrative_states';
 
 export default {
   getAPIUrl() {
@@ -18,6 +19,9 @@ export default {
   },
   getModulesURI() {
     return MODULES;
+  },
+  getQuotesAdministrativesStatesURI() {
+    return QUOTES_ADMINISTRATIVE_STATES;
   },
 
   // CLIENTS
@@ -39,4 +43,7 @@ export default {
   getModules() {
     return axios.get(API_URL + MODULES);
   },
+  getQuotesAdministrativesStates() {
+      return axios.get(API_URL + QUOTES_ADMINISTRATIVE_STATES);
+  }
 };

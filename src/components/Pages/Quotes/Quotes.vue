@@ -60,6 +60,19 @@
                                                           :rules="quotesDateRules" required clearable></v-text-field>
                                         </v-flex>
                                         <v-spacer></v-spacer>
+                                        <v-flex xs12 sm12 md6>
+                                            <v-autocomplete
+                                                    v-model="administrativeState"
+                                                    :items="administrativeSates"
+                                                    label="Etat*"
+                                                    persistent-hint
+                                                    return-object
+                                                    single-line
+                                                    item-text="label"
+                                                    :rules="administrativeStateRules" clearable required
+                                            >
+                                            </v-autocomplete>
+                                        </v-flex>
                                         <v-flex xs12 sm12 md6 mb-3>
                                             <v-text-field label="Remise" v-model="quotes.discount" type="number"
                                                           required clearable></v-text-field>
@@ -342,6 +355,14 @@
                         console.log(error);
                         this.loader = false;
                     });
+                API.getQuotesAdministrativesStates()
+                    .then((administrativesSates) => {
+                        this.administrativeSates = administrativesSates.data['hydra:member'];
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        this.loader = false;
+                    });
             }
         },
         data () {
@@ -351,6 +372,7 @@
                 loaderText: 'Chargement des devis',
                 modules: [],
                 projects: [],
+                administrativeSates: [],
                 notifications: false,
                 sound: true,
                 widgets: false,
@@ -362,12 +384,16 @@
                 quotes: {
                     date: '',
                     discount: 0,
-                    project: {},
+                    project: '',
                     commercialId: 1,
                     sellingPrice: 0,
                 },
 
                 quotesDate: '',
+                administrativeState: '',
+                administrativeStateRules: [
+                    v => !!v || "L'état administratif est requis"
+                ],
                 quotesDateRules: [
                     v => !!v || 'La date est requise'
                 ],
