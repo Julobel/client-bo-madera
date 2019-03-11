@@ -27,21 +27,47 @@
                                             <v-subheader class="text-uppercase title">Informations générales</v-subheader>
                                         </v-flex>
                                         <v-flex xs12 sm12 md6>
-                                            <v-text-field label="Date*" v-model="quotesDate" type="date"
+                                            <v-select label="Projet*" v-model="quotes.project"
+                                                      :items="projects"
+                                                      item-text="firstName"
+                                                      persistent-hint
+                                                      return-object
+                                                      single-line
+                                                      clearable
+                                                      :rules="projectRules" required>
+                                                <template slot="selection" slot-scope="data">
+                                                    <template>
+                                                        {{data.item.name}}
+                                                    </template>
+                                                </template>
+                                                <template slot="item" slot-scope="data">
+                                                    <template>
+                                                        <v-list-tile-content>
+                                                            <v-list-tile-title v-html="
+                                                                    data.item.name
+                                                            "></v-list-tile-title>
+                                                        </v-list-tile-content>
+                                                        <small>
+                                                            {{data.item.actorClientId.firstName}}  -
+                                                            {{data.item.actorClientId.firstName}}
+                                                        </small>
+                                                    </template>
+                                                </template>
+                                            </v-select>
+                                        </v-flex>
+                                        <v-flex xs12 sm12 md6>
+                                            <v-text-field label="Date*" v-model="quotes.date" type="date"
                                                           :rules="quotesDateRules" required clearable></v-text-field>
                                         </v-flex>
                                         <v-spacer></v-spacer>
                                         <v-flex xs12 sm12 md6 mb-3>
-                                            <v-text-field label="Remise" v-model="quotesDiscount"
+                                            <v-text-field label="Remise" v-model="quotes.discount" type="number"
                                                           required clearable></v-text-field>
                                         </v-flex>
 
                                         <v-flex xs12 sm12 md12 mb-5>
-                                            <v-layout row justify-space-between>
+                                            <v-layout row>
                                                 <v-subheader class="text-uppercase title">Modules</v-subheader>
-
-                                                <v-btn  color="info"
-                                                        @click="addNewModule()">Ajouter un module</v-btn>
                                             </v-layout>
                                         </v-flex>
                                         <v-flex v-for="(module, index) in quotesModules" class="xs12 sm12 md-5 mb-5">
@@ -89,6 +115,12 @@
                                                         @click="deleteModulule(index)">close</v-icon>
                                             </v-layout>
                                         </v-flex>
+                                        <v-flex xs12 sm12 md12 mb-5>
+                                            <v-layout row justify-end>
+                                                <v-btn  color="info"
+                                                        @click="addNewModule()">Ajouter un module</v-btn>
+                                            </v-layout>
+                                        </v-flex>
                                         <small>* indique les champs obligatoires</small>
 
                                         <v-flex xs12 sm12 md12 mt-4>
@@ -99,7 +131,7 @@
                                         <v-flex xs12 sm12 md12>
                                             <v-card class="mt-3 ml-2 mr-2">
                                                 <v-data-table
-                                                        :headers="headers"
+                                                        :headers="headersModules"
                                                         :items="quotesModules"
                                                         hide-actions
                                                         hide-details
@@ -114,8 +146,8 @@
                                                         <td>{{ calculatePrice(props.item.data, props.index, props.item.quantity) * props.item.quantity }}€</td>
                                                     </template>
                                                     <template v-slot:footer>
-                                                        <td :colspan="headers.length" class="text-xs-right">
-                                                            <strong>Prix Total: {{ totalPriceHT }}€ HT | {{totalPriceHT + (totalPriceHT * (20/100))}}€ TTC</strong>
+                                                        <td :colspan="headersModules.length" class="text-xs-right">
+                                                            <strong>Prix Total: {{ quotes.sellingPrice }}€ HT | {{quotes.sellingPrice + (quotes.sellingPrice * (20/100))}}€ TTC</strong>
                                                         </td>
                                                     </template>
                                                 </v-data-table>
@@ -143,6 +175,29 @@
             </v-dialog>
         </v-layout>
 
+        <!--TABLEAU-->
+        <v-card class="mt-3 ml-2 mr-2">
+            <v-card-title>
+                <v-text-field
+                        v-model="search"
+                        append-icon="search"
+                        label="Rechercher"
+                        single-line
+                        hide-details
+                ></v-text-field>
+            </v-card-title>
+            <v-data-table
+                    :headers="headersQuotes"
+                    :items="quotesList"
+                    :search="search"
+            >
+                <template class="tableLine" v-slot:items="props">
+                    <td>{{ props.item.project.name }}</td>
+                    <td>{{ props.item.project.actorClientId.firstName }} {{ props.item.project.actorClientId.lastName }}</td>
+                </template>
+            </v-data-table>
+        </v-card>
+
         <!--NOTIFICATION-->
         <v-snackbar
                 v-model="snackbar"
@@ -166,14 +221,14 @@
                     v-model="loader"
                     hide-overlay
                     persistent
-                    width="300"
+                    width="400"
             >
                 <v-card
                         color="#1B5E20"
                         dark
                 >
-                    <v-card-text>
-                        Chargement des devis
+                    <v-card-text id="card-text">
+                        {{ loaderText }}
                         <v-progress-linear
                                 indeterminate
                                 color="#69F0AE"
@@ -202,21 +257,25 @@
         methods: {
             calculatePrice(item, index, quantity) {
                 let price = 0;
+                let nbBoucle = 0;
                 item.structureComponents.forEach((structureComponent) => {
-                    price += (structureComponent.component.componentPrices[0].value * structureComponent.componentQuantity);
+                    price += (structureComponent.component.componentPrices[1].value * structureComponent.componentQuantity);
                     console.log('Price = ' + price);
+                    nbBoucle += 1;
                 });
+                console.log('Tour de boucle: ' + nbBoucle);
                 this.quotesModules[index].price = price * quantity;
+                //if (structureComponent.component.componentPrices[1])
                 this.calculateTotalPriceHT();
                 return price;
             },
             calculateTotalPriceHT() {
-                this.totalPriceHT = 0;
+                this.quotes.sellingPrice = 0;
                 let currentTotal = 0;
                 this.quotesModules.forEach((quotesModule) => {
                     currentTotal += quotesModule.price;
                 });
-                this.totalPriceHT = currentTotal;
+                this.quotes.sellingPrice = currentTotal;
             },
             addNewModule() {
                 this.quotesModules.push({
@@ -250,28 +309,63 @@
             load() {
                 this.totalPriceHT = 0;
                 this.loader = true;
-                API.getModules()
-                    .then(modules => {
-                        console.log(modules.data['hydra:member']);
-                        this.modules = modules.data['hydra:member'];
+                API.getQuotes()
+                    .then(quotes => {
+                        console.log(quotes.data['hydra:member']);
+                        this.quotesList = Object.values(quotes.data['hydra:member']);
                         this.loader = false;
+                        this.loaderText = 'Chargement des modules';
+                        this.loader = true;
+                        API.getModules()
+                            .then(modules => {
+                                console.log(modules.data['hydra:member']);
+                                this.modules = modules.data['hydra:member'];
+                                this.loader = false;
+                                this.loaderText = 'Chargement des projets';
+                                this.loader = true;
+                                API.getProjects()
+                                    .then((projects) => {
+                                        this.projects = projects.data['hydra:member'];
+                                        this.loader = false;
+                                    })
+                                    .catch((error) => {
+                                        console.log(error);
+                                        this.loader = false;
+                                    });
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                                this.loader = false;
+                            });
                     })
                     .catch((error) => {
                         console.log(error);
                         this.loader = false;
-                    })
+                    });
             }
         },
         data () {
             return {
                 dialog: false,
                 loader: false,
+                loaderText: 'Chargement des devis',
                 modules: [],
+                projects: [],
                 notifications: false,
                 sound: true,
                 widgets: false,
                 valid: true,
                 totalPriceHT: 0,
+                quotesList: [],
+                search: '',
+
+                quotes: {
+                    date: '',
+                    discount: 0,
+                    project: {},
+                    commercialId: 1,
+                    sellingPrice: 0,
+                },
 
                 quotesDate: '',
                 quotesDateRules: [
@@ -285,6 +379,9 @@
                     v => !!v || 'La quantité est requise'
                 ],
 
+                projectRules: [
+                    v => !!v || 'Le projet est requis'
+                ],
                 quotesModules: [
                     {
                         data: [],
@@ -293,7 +390,12 @@
                     }
                 ],
 
-                headers: [
+                headersQuotes: [
+                    { text: 'Projet', value: 'project.name' },
+                    { text: 'Client', value: 'project.actorClientId.firstName' },
+                ],
+
+                headersModules: [
                     { text: 'Module', value: 'data.label' },
                     { text: 'Nature', value: 'data.moduleNature.label' },
                     { text: 'Longueur', value: 'data.length' },
@@ -320,5 +422,9 @@
 
     .formIcon:hover {
         cursor: pointer;
+    }
+
+    #card-text {
+        font-size: 25px;
     }
 </style>

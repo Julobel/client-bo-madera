@@ -28,24 +28,27 @@
                                         </v-flex>
                                         <v-flex xs12 sm12 md6>
                                             <v-text-field label="Nom*" v-model="projectName"
-                                                          :rules="projectNameRules" required></v-text-field>
+                                                          :rules="projectNameRules" clearable required></v-text-field>
                                         </v-flex>
                                         <v-spacer></v-spacer>
                                         <v-flex xs12 sm12 md6>
                                             <v-text-field label="Date*" v-model="projectDate" type="date"
-                                                          :rules="projectDateRules" required></v-text-field>
+                                                          :rules="projectDateRules" clearable required></v-text-field>
                                         </v-flex>
                                         <v-flex xs12 sm12 md12>
                                             <v-subheader class="text-uppercase title">Client</v-subheader>
                                         </v-flex>
                                         <v-flex xs12 sm12 md6>
-                                            <v-select label="Client*" v-model="projectClient"
-                                                      :items="clients"
-                                                      item-text="firstName"
-                                                      persistent-hint
-                                                      return-object
-                                                      single-line
-                                                      :rules="projectClientRules" required>
+                                            <v-autocomplete
+                                                    v-model="projectClient"
+                                                    :items="clients"
+                                                    label="Client*"
+                                                    persistent-hint
+                                                    return-object
+                                                    single-line
+                                                    item-text="firstName"
+                                                    :rules="projectClientRules" clearable required
+                                            >
                                                 <template slot="selection" slot-scope="data">
                                                     <template>
                                                         {{data.item.firstName}} {{data.item.lastName}}
@@ -56,7 +59,7 @@
                                                         {{data.item.firstName}} {{data.item.lastName}}
                                                     </template>
                                                 </template>
-                                            </v-select>
+                                            </v-autocomplete>
                                         </v-flex>
                                     </v-layout>
                                     <small>* indique les champs obligatoires</small>
@@ -238,7 +241,7 @@
                 projectDateRules: [
                     v => !!v || 'La date est requise'
                 ],
-                projectClient: {firstName: '', lastName: ''},
+                projectClient: '',
                 projectClientRules: [
                     v => !!v || 'Le client est requis'
                 ],
