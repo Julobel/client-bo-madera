@@ -144,13 +144,13 @@
                     v-model="loader"
                     hide-overlay
                     persistent
-                    width="300"
+                    width="400"
             >
                 <v-card
                         color="#1B5E20"
                         dark
                 >
-                    <v-card-text>
+                    <v-card-text id="card-text">
                         Chargement des clients
                         <v-progress-linear
                                 indeterminate
@@ -283,5 +283,9 @@
 <style scoped>
     .tableLine:hover {
         background: #B9F6CA;
+    }
+
+    #card-text {
+        font-size: 25px;
     }
 </style>
