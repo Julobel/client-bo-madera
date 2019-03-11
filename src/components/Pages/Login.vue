@@ -4,6 +4,7 @@
         <v-layout align-center justify-center>
             <v-flex xs12 sm8 md4>
                 <v-card class="elevation-12">
+                    <v-img :src="`https://i.ibb.co/1zfvxL4/logo-madera.png`"></v-img>
                     <v-toolbar dark color="green darken-4">
                         <v-toolbar-title>Connexion</v-toolbar-title>
                     </v-toolbar>
