@@ -6,6 +6,11 @@ const PROJECTS = '/projects';
 const QUOTES = '/quotes';
 const MODULES = '/modules';
 const QUOTES_ADMINISTRATIVE_STATES ='/quotes_administrative_states';
+const QUOTES_COVERING ='/component_coverings';
+const QUOTES_EXT ='/component_exterior_finishes';
+const QUOTES_INS ='/component_insulations';
+const QUOTES_INT ='/component_interior_finishes';
+const QUOTES_WIN ='/component_window_frames';
 
 export default {
   getAPIUrl() {
@@ -43,7 +48,26 @@ export default {
   getModules() {
     return axios.get(API_URL + MODULES);
   },
-  getQuotesAdministrativesStates() {
+    getCoveringQualities() {
+        return axios.get(API_URL + QUOTES_COVERING);
+    },
+    getQuotesAdministrativesStates() {
       return axios.get(API_URL + QUOTES_ADMINISTRATIVE_STATES);
   }
+    ,
+    getInteriorQualities() {
+        return axios.get(API_URL + QUOTES_INT);
+    }
+    ,
+    getExteriorQualities() {
+        return axios.get(API_URL + QUOTES_EXT);
+    },
+    getInsulationQualities() {
+        return axios.get(API_URL + QUOTES_INS);
+    },
+    getWindowQualities() {
+        return axios.get(API_URL + QUOTES_WIN);
+    }
+
+
 };

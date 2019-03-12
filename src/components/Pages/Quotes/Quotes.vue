@@ -90,7 +90,7 @@
                                             </v-layout>
                                             <v-layout class="row">
                                                 <v-flex xs12 sm12 md5>
-                                                    <v-select label="Nom*" v-model="module.data"
+                                                    <v-select label="Nom*" v-model="module.data" @change="initCustomizeModule(index)"
                                                               :items="modules"
                                                               item-text="label"
                                                               persistent-hint
@@ -126,6 +126,50 @@
                                                 </v-flex>
                                                 <v-icon class="formIcon red--text ml-3"
                                                         @click="deleteModulule(index)">close</v-icon>
+                                            </v-layout>
+                                            <v-layout v-if="Object.values(module.data).length >0 " class="row" >
+                                                <v-flex xs10 sm10 md4>
+                                                    <v-btn  color="info"
+                                                            @click="customizeModule(index,module.data)">Personnaliser</v-btn>
+                                                </v-flex>
+                                                <v-flex v-if="customizedModule.includes(index)" class="row">
+                                                    <v-select label="" v-model="covering[index]"
+                                                              :items="coveringQualities"
+                                                              item-text="label"
+                                                              persistent-hint
+                                                              return-object
+                                                              single-line>
+                                                    </v-select>
+                                                    <v-select label="Finition Extérieure : " v-model="exterior[index]"
+                                                              :items="exteriorQualities"
+                                                              item-text="label"
+                                                              persistent-hint
+                                                              return-object
+                                                              single-line>
+                                                    </v-select>
+                                                    <v-select label="Finition Intérieure : " v-model="interior[index]"
+                                                              :items="interiorQualities"
+                                                              item-text="label"
+                                                              persistent-hint
+                                                              return-object
+                                                              single-line>
+                                                    </v-select>
+                                                    <v-select label="Isolation: " v-model="insulation[index]"
+                                                              :items="insulationQualities"
+                                                              item-text="label"
+                                                              persistent-hint
+                                                              return-object
+                                                              single-line>
+                                                    </v-select>
+                                                    <v-select label="Huisserie : " v-model="window[index]"
+                                                              :items="windowQualities"
+                                                              item-text="label"
+                                                              persistent-hint
+                                                              return-object
+                                                              single-line>
+                                                    </v-select>
+
+                                                </v-flex>
                                             </v-layout>
                                         </v-flex>
                                         <v-flex xs12 sm12 md12 mb-5>
@@ -319,6 +363,29 @@
                 this.dialog = false;
                 this.$refs.form.reset();
             },
+            initCustomizeModule(index) {
+                this.covering[index] = '';
+                this.interior [index] = '';
+                this.exterior [index] = '';
+                this.window [index] = '';
+                this.insulation[index] = '';
+                if (array.indexOf(index)>-1) {
+                    this.customizedModule.splice(array.indexOf(index), 1);
+                }
+                console.log('coucou');
+                console.log(this.customizedModule);
+                console.log('coucou');
+            },
+            customizeModule(index,module) {
+                this.covering[index] = module.moduleRange.componentCovering;
+                this.interior [index] = module.moduleRange.componentInteriorFinish;
+                this.exterior [index] = module.moduleRange.componentWindowFrame;
+                this.window [index] = module.moduleRange.componentCovering;
+                this.insulation[index] = module.moduleRange.componentInsulation;
+                if(!this.customizedModule.includes(index)){
+                    this.customizedModule.push(index);
+                }
+            },
             load() {
                 this.totalPriceHT = 0;
                 this.loader = true;
@@ -358,6 +425,49 @@
                 API.getQuotesAdministrativesStates()
                     .then((administrativesSates) => {
                         this.administrativeSates = administrativesSates.data['hydra:member'];
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        this.loader = false;
+                    });
+                API.getCoveringQualities()
+                    .then((coveringQualities) => {
+                        this.coveringQualities = coveringQualities.data['hydra:member'];
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        this.loader = false;
+                    });
+                API.getInteriorQualities()
+                    .then((intQualities) => {
+                        this.interiorQualities = intQualities.data['hydra:member'];
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        this.loader = false;
+                    });
+                API.getExteriorQualities()
+                    .then((extQualities) => {
+                        this.exteriorQualities= extQualities.data['hydra:member'];
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        this.loader = false;
+                    });
+                API.getInsulationQualities()
+                    .then((insQualities) => {
+                        this.insulationQualities= insQualities.data['hydra:member'];
+                        console.log('-------------------');
+                        console.log(this.insulationQualities);
+                        console.log('-------------------');
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        this.loader = false;
+                    });
+                API.getWindowQualities()
+                    .then((winQualities) => {
+                        this.windowQualities= winQualities.data['hydra:member'];
                     })
                     .catch((error) => {
                         console.log(error);
@@ -436,6 +546,17 @@
                 mode: '',
                 timeout: 2000,
                 text: 'Devis enregistré',
+                customizedModule:[],
+                coveringQualities:[],
+                interiorQualities:[],
+                exteriorQualities:[],
+                insulationQualities:[],
+                windowQualities:[],
+                covering:{},
+                interior:{},
+                exterior:{},
+                insulation:{},
+                window:{}
             }
         }
     }
