@@ -50,6 +50,9 @@
                 <span class="font-weight-light grey--text text--lighten-4">BACK OFFICE</span>
             </v-toolbar-title>
             <v-spacer></v-spacer>
+            <v-toolbar-title class="madera-title headline text-uppercase" @click="$router.push('Home')">
+                <span class="mr-2 white--text">Testeur</span>
+            </v-toolbar-title>
             <v-btn :to="{name: 'Login'}" id="disconnect-btn">Déconnexion</v-btn>
         </v-toolbar>
     </div>

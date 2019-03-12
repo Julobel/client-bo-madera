@@ -255,20 +255,30 @@
                 ],
                 street: '',
                 addressOption: '',
-                streetRules: [],
+                streetRules: [
+                    v => !!v || "La rue est requise",
+                ],
                 country: '',
-                countryRules: [],
+                countryRules: [
+                    v => !!v || "Le pays est requis",
+                ],
                 city: '',
-                cityRules: [],
+                cityRules: [
+                    v => !!v || "La ville est requise",
+                ],
                 postalCode: '',
-                postalCodeRules: [],
+                postalCodeRules: [
+                    v => !!v || "Le code postal requis",
+                ],
                 mail: '',
                 mailRules: [
-                    v => !!v || "L'email esr requis",
+                    v => !!v || "L'email est requis",
                     v => /.+@.+/.test(v) || "E-mail must be valid"
                 ],
                 phoneNumber: '',
-                phoneNumberRules: [],
+                phoneNumberRules: [
+                    v => !!v || "Le téléphone est requis",
+                ],
                 snackbar: false,
                 y: 'top',
                 x: null,
